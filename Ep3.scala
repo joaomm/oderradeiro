@@ -51,8 +51,8 @@ class Pol private (private val terms: List[Term]){
 	def unary_- : Pol = Pol(terms.map(term => -term))
 	def unary_+ : Pol = this
 	
-	def +(d: Double): Pol = this + Pol(d, 0)
-	def -(d: Double): Pol = this + Pol(-d, 0)
+	def +(d: Double): Pol = if(d == 0) this else this + Pol(d, 0)
+	def -(d: Double): Pol = if(d == 0) this else this - Pol(d, 0)
 	def *(d: Double): Pol = Pol(terms.map(term => term*d))
 	def /(d: Double): Pol = this * Pol(1/d, 0)
 	
@@ -244,12 +244,12 @@ Test("Apply de Polinomios") {
 
 //Double
 Test("Pol + Double") {
-	assertEquals(Pol(1, 0) + 2, Pol(3, 0))
+	assertEquals((Pol(1, 0) + 2) + 0, Pol(3, 0))
 	assertEquals(Pol(1, 2) + 2, Pol(1, 2) + Pol(2, 0))
 }
 
 Test("Pol - Double") {
-	assertEquals(Pol(1, 0) - 2, Pol(-1, 0))
+	assertEquals((Pol(1, 0) - 2) + 0, Pol(-1, 0))
 }
 
 Test("Pol * Double") {
