@@ -36,9 +36,9 @@ class Pol private (private val terms: List[Term]) {
  
   // aritmetica mista (o operando 1 e' um polinomio, o operando 2 e' um numero)
   def + (d: Double): Pol
-  <b style="color:red">def - (d: Double): Pol </b>
-  <b style="color:red">def * (d: Double): Pol </b>
-  <b style="color:red">def / (d: Double): Pol </b>
+  def - (d: Double): Pol
+  def * (d: Double): Pol
+  def / (d: Double): Pol
  
   // grau, potenciacao e derivacao
   def degree: Int

@@ -51,7 +51,10 @@ class Pol private (private val terms: List[Term]){
 	def unary_- : Pol = Pol(terms.map(term => -term))
 	def unary_+ : Pol = this
 	
+	def +(d: Double): Pol = this + Pol(d, 0)
+	def -(d: Double): Pol = this + Pol(-d, 0)
 	def *(d: Double): Pol = Pol(terms.map(term => term*d))
+	def /(d: Double): Pol = this * Pol(1/d, 0)
 	
 	def degree = terms.head.degree
 	def ^(n: Int): Pol = List.fill(n)(this).reduceLeft(_ * _)
@@ -61,7 +64,9 @@ class Pol private (private val terms: List[Term]){
 	def apply(n: Double): Double = terms.map(term => term(n)).reduceLeft(_ + _)
 	def apply(p: Pol): Pol = terms.map(term => (p ^ term.exp) * term.coef).reduceLeft(_ + _)
 	
-	override def toString : String = terms.map(term => term.toString).mkString(" + ")
+	override def toString : String = 
+		if(terms.isEmpty) "0"
+		else terms.map(term => term.toString).mkString(" + ")
 	
 	override def equals(other: Any): Boolean =
 		other match {
@@ -71,6 +76,7 @@ class Pol private (private val terms: List[Term]){
 }
 
 object Pol {
+
 	def apply(coef: Double, exp: Int) : Pol = new Pol(coef, exp)
 	def apply(coef: Double): Pol = new Pol(coef, 0)
 	def apply(terms: List[Term]): Pol = new Pol(terms)
@@ -101,6 +107,8 @@ object Pol {
 		return add(terms1.tail, terms2.tail, result)
 	}
 }
+
+implicit def doubleToPol(d: Double): Pol = Pol(d, 0)
 
 def assertEquals(actual: Any, expected: Any) = {
 	try{
@@ -235,12 +243,35 @@ Test("Apply de Polinomios") {
 }
 
 //Double
+Test("Pol + Double") {
+	assertEquals(Pol(1, 0) + 2, Pol(3, 0))
+	assertEquals(Pol(1, 2) + 2, Pol(1, 2) + Pol(2, 0))
+}
+
+Test("Pol - Double") {
+	assertEquals(Pol(1, 0) - 2, Pol(-1, 0))
+}
+
 Test("Pol * Double") {
 	assertEquals(Pol(Term(2,2), Term(1, 0)) * 2, Pol(Term(4,2), Term(2,0)))
 }
 
+Test("Pol / Double") {
+	assertEquals(Pol(Term(4,2), Term(2, 0)) / 2, Pol(Term(2,2), Term(1,0)))
+}
+
+
+//Implicit doubleToPol
+Test("doubleToPol"){
+	assertEquals(2 + Pol(Term(4,2), Term(2, 0)), 4 - Pol(Term(-4,2), Term(4,0)) + 4)
+}
 
 //Degree
 Test("Degree") {
 	assertEquals(Pol(6, 3).degree, 3)
+}
+
+//POLINOMIO NULO
+Test("toString do polinomio nulo deve ser 0") {
+	assertEquals((Pol(1, 1) - Pol(1, 1)).toString, "0")
 }
