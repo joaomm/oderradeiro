@@ -41,7 +41,7 @@ class Pol private (private val terms: List[Term]) {
   <b style="color:red">def / (d: Double): Pol </b>
  
   // grau, potenciacao e derivacao
-  <b style="color:red">def degree: Int </b>
+  def degree: Int
   def ^(n: Int): Pol
   def deriv: Pol
   <b style="color:red">def ! : Pol</b>

@@ -25,6 +25,8 @@ case class Term(coef:Double, exp:Int) {
 	
 	def apply(x: Double): Double = coef * pow(x, exp)
 	
+	def degree: Int = exp
+
 	def canBeSummedWith(that: Term) = 
 		(coef + that.coef) != 0
 		
@@ -38,14 +40,6 @@ class Pol private (private val terms: List[Term]){
 	
 	private def this(coef: Double, exp: Int) = this(List(Term(coef, exp)))
 	
-	override def toString : String = terms.map(term => term.toString).mkString(" + ")
-	
-	override def equals(other: Any): Boolean =
-		other match {
-			case that: Pol => terms == that.terms
-			case _ => false
-		} 
-		
 	def + (that: Pol): Pol = Pol(Pol.add(this.terms, that.terms))	
 	def -(that: Pol): Pol = this + (-that)
 	
@@ -53,16 +47,26 @@ class Pol private (private val terms: List[Term]){
 		val listaPols = terms.map(term => Pol(term * that.terms))
 		listaPols.reduceLeft(_ + _)
 	}
-	def ^(n: Int): Pol = List.fill(n)(this).reduceLeft(_ * _)
+
+	def unary_- : Pol = Pol(terms.map(term => -term))
+	def unary_+ : Pol = this
 	
 	def *(d: Double): Pol = Pol(terms.map(term => term*d))
 	
-	def unary_- : Pol = Pol(terms.map(term => -term))
-	def unary_+ : Pol = this
+	def degree = terms.head.degree
+	def ^(n: Int): Pol = List.fill(n)(this).reduceLeft(_ * _)
 	def deriv = Pol(terms.filter(term => term.derivavel).map(term => term.deriv))
 	
 	def apply(n: Double): Double = terms.map(term => term(n)).reduceLeft(_ + _)
 	def apply(p: Pol): Pol = terms.map(term => (p ^ term.exp) * term.coef).reduceLeft(_ + _)
+	
+	override def toString : String = terms.map(term => term.toString).mkString(" + ")
+	
+	override def equals(other: Any): Boolean =
+		other match {
+			case that: Pol => terms == that.terms
+			case _ => false
+		} 	
 }
 
 object Pol {
@@ -234,3 +238,7 @@ Test("Pol * Double") {
 }
 
 
+//Degree
+Test("Degree") {
+	assertEquals(Pol(6, 3).degree, 3)
+}
