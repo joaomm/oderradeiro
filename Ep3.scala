@@ -56,6 +56,7 @@ class Pol private (private val terms: List[Term]){
 	def degree = terms.head.degree
 	def ^(n: Int): Pol = List.fill(n)(this).reduceLeft(_ * _)
 	def deriv = Pol(terms.filter(term => term.derivavel).map(term => term.deriv))
+	def ! = deriv
 	
 	def apply(n: Double): Double = terms.map(term => term(n)).reduceLeft(_ + _)
 	def apply(p: Pol): Pol = terms.map(term => (p ^ term.exp) * term.coef).reduceLeft(_ + _)
@@ -190,6 +191,7 @@ Test("Derivando um termo facil") {
 
 Test("Derivando um polinomio com termo facil") {
 	assertEquals(Pol(2, 1).deriv, Pol(2, 0))
+	assertEquals(Pol(2, 1)!, Pol(2, 0))
 }
 
 Test("Derivando um polinomio com termo que vai sumir") {

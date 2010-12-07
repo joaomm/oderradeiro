@@ -44,7 +44,7 @@ class Pol private (private val terms: List[Term]) {
   def degree: Int
   def ^(n: Int): Pol
   def deriv: Pol
-  <b style="color:red">def ! : Pol</b>
+  def ! : Pol
  
   // calcula o valor do polinomio alvo para um dado valor de x
   def apply(x: Double): Double
