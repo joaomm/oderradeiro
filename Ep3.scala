@@ -1,3 +1,5 @@
+import scala.math.pow
+
 case class Term(coef:Double, exp:Int) {
 	require(coef != 0 && exp >= 0)
 	
@@ -16,8 +18,12 @@ case class Term(coef:Double, exp:Int) {
 		list.map(term => term * this)
 	}
 	
+	def *(d: Double) = Term(coef*d, exp)
+	
 	def deriv = Term(coef * exp, exp - 1)
 	def derivavel = exp > 0
+	
+	def apply(x: Double): Double = coef * pow(x, exp)
 	
 	def canBeSummedWith(that: Term) = 
 		(coef + that.coef) != 0
@@ -49,9 +55,14 @@ class Pol private (private val terms: List[Term]){
 	}
 	def ^(n: Int): Pol = List.fill(n)(this).reduceLeft(_ * _)
 	
+	def *(d: Double): Pol = Pol(terms.map(term => term*d))
+	
 	def unary_- : Pol = Pol(terms.map(term => -term))
 	def unary_+ : Pol = this
 	def deriv = Pol(terms.filter(term => term.derivavel).map(term => term.deriv))
+	
+	def apply(n: Double): Double = terms.map(term => term(n)).reduceLeft(_ + _)
+	def apply(p: Pol): Pol = terms.map(term => (p ^ term.exp) * term.coef).reduceLeft(_ + _)
 }
 
 object Pol {
@@ -204,3 +215,22 @@ Test("Potencia de Polinomios") {
 	val expected = Pol(Term(8,6), Term(24,4), Term(24, 2), Term(8,0))
 	assertEquals(actual, expected)
 }
+
+//Apply
+Test("Apply de Double") {
+	val p = Pol(Term(3,3), Term(-1, 2), Term(5, 1), Term(-2, 0))
+	assertEquals(p(3), 85)
+}
+
+Test("Apply de Polinomios") {
+	val p = Pol(Term(1, 2), Term(1,1))
+	val y = Pol(Term(1,1), Term(-1,0))
+	assertEquals(p(y), Pol(Term(1,2), Term(-1,1)))
+}
+
+//Double
+Test("Pol * Double") {
+	assertEquals(Pol(Term(2,2), Term(1, 0)) * 2, Pol(Term(4,2), Term(2,0)))
+}
+
+

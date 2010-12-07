@@ -1,0 +1,111 @@
+
+<?xml version="1.0"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+<head> 
+<title>EP3: Polin&ocirc;mios como Objetos Funcionais em Scala</title> 
+<link rel="stylesheet" href="stylesheet.css" type="text/css" /> 
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+</head> 
+ 
+<body> 
+<h2>Exerc&iacute;cio-Programa 3: Polin&ocirc;mios como Objetos Funcionais em Scala</h2> 
+<pre> 
+<b style="color:red">package pfc </b>
+ 
+private case class Term(coef: Double, exp: Int) {
+  require(coef != 0 &amp;&amp; exp >= 0)
+}
+ 
+class Pol private (private val terms: List[Term]) {
+ 
+  // construtor auxiliar
+  // (n.b.: tanto o construtor primario como o auxiliar sao privados)
+  private def this(coef: Double, exp: Int)
+ 
+  // aritmetica de polinomios
+  def + (that: Pol): Pol
+  def - (that: Pol): Pol
+  def * (that: Pol): Pol
+  <b style="color:red">def / (that: Pol): Tuple2[Pol, Pol]</b>
+ 
+  // operadores unarios
+  def unary_+ : Pol
+  def unary_- : Pol
+ 
+  // aritmetica mista (o operando 1 e' um polinomio, o operando 2 e' um numero)
+  def + (d: Double): Pol
+  <b style="color:red">def - (d: Double): Pol </b>
+  <b style="color:red">def * (d: Double): Pol </b>
+  <b style="color:red">def / (d: Double): Pol </b>
+ 
+  // grau, potenciacao e derivacao
+  <b style="color:red">def degree: Int </b>
+  def ^(n: Int): Pol
+  def deriv: Pol
+  <b style="color:red">def ! : Pol</b>
+ 
+  // calcula o valor do polinomio alvo para um dado valor de x
+  def apply(x: Double): Double
+ 
+  // composicao do polinomio alvo com outro polinomio
+  def apply(that: Pol): Pol
+ 
+  // sobrescrita de metodos da classe Any
+  override def equals(other: Any): Boolean
+  <b style="color:red">override def hashCode: Int</b>
+  override def toString
+ 
+  // metodo auxiliar que multiplica o polinomio alvo por um termo simples
+  private def * (term: Term): Pol
+}
+ 
+object Pol {
+ 
+  // conversao implicita de Double em Pol
+  <b style="color:red">implicit def doubleToPol(d: Double): Pol</b>
+ 
+  // metodos de fabrica acessiveis para os clientes
+  def apply(coef: Double, exp: Int): Pol
+  def apply(coef: Double): Pol
+ 
+  // metodo de fabrica interno (serve apenas para evitar o uso de new)
+  private def apply(terms: List[Term]): Pol
+ 
+  // metodo auxiliar para as operacoes de adicao e subtracao de polinomios
+  private def add(terms1: List[Term], terms2: List[Term]): List[Term]
+}
+</pre> 
+
+ 
+<h3>Entrega</h3> 
+<p> 
+Este trabalho deve ser entregue at&eacute; o dia 08/12, por meio do sistema <a
+href="http://paca.ime.usp.br">Paca/Moodle</a>.
+</p> 
+<p> 
+Entregue um arquivo fonte em Scala. O nome do arquivo deve ser da forma
+<code>ep3-</code>&lt;nomes-dos-membros-do-grupo><code>.scala</code>.
+Por exemplo: <code>ep3-joao-maria.scala</code>. No nome do arquivo devem ser
+omitidos os acentos dos nomes dos membros do grupo. Al&eacute;m disso, a separa&ccedil;&atilde;o
+entre palavras n&atilde;o deve ser feita com espa&ccedil;os. Ou seja, o arquivo n&atilde;o deve se
+chamar "<code>ep3-jo&atilde;o-maria.scala</code>" nem
+"<code>ep3&nbsp;joao&nbsp;maria.scala</code>".
+</p> 
+ 
+<address> 
+ 
+<a href="http://jigsaw.w3.org/css-validator"><img src="../../vcss.gif"
+   alt="Valid CSS!" align="right" border="0" width="88" height="31" /></a>  
+<a href="http://validator.w3.org/check/referer"><img src="../../vxhtml10.gif"
+   alt="Valid XHTML 1.0!" align="right" border="0" width="88"
+   height="31" /></a>  
+<!-- hhmts start --> 
+Last modified: Sat Nov 27 01:38:51 BRST 2010
+<!-- hhmts end --> 
+<br /> 
+</address> 
+</body> 
+ 
+</html> 
