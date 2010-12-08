@@ -14,9 +14,14 @@ case class Term(coef:Double, exp:Int) {
 		Term(coef * that.coef, exp + that.exp)
 	}
 	
+	def /(that: Term) = {
+		Term( coef / that.coef, exp - that.exp)
+	}
+	
 	def *(list: List[Term]): List[Term] = {
 		list.map(term => term * this)
 	}
+	
 	
 	def *(d: Double) = Term(coef*d, exp)
 	
@@ -46,6 +51,10 @@ class Pol private (private val terms: List[Term]){
 	def *(that: Pol): Pol = {
 		val listaPols = terms.map(term => Pol(term * that.terms))
 		listaPols.reduceLeft(_ + _)
+	}
+	
+	def /(that: Pol): Tuple2[Pol, Pol] = {
+		Pol.devide(this, that, Pol(List()))
 	}
 
 	def unary_- : Pol = Pol(terms.map(term => -term))
@@ -105,6 +114,16 @@ object Pol {
 			return add(terms1.tail, terms2.tail, (term1 + term2) :: result)
 			
 		return add(terms1.tail, terms2.tail, result)
+	}
+	
+	def devide(dividendo: Pol, divisor: Pol, resultado: Pol): Tuple2[Pol, Pol] = {
+		if(dividendo.degree < divisor.degree)
+			return (resultado, dividendo)
+		
+		val quocienteTerm: Term = (dividendo.terms.head / divisor.terms.head)
+		val restoParcial = dividendo - Pol(quocienteTerm * divisor.terms) 
+		
+		devide(restoParcial, divisor, resultado + Pol(quocienteTerm))		
 	}
 }
 
@@ -274,4 +293,25 @@ Test("Degree") {
 //POLINOMIO NULO
 Test("toString do polinomio nulo deve ser 0") {
 	assertEquals((Pol(1, 1) - Pol(1, 1)).toString, "0")
+}
+
+//Divisão
+Test("divisao de dois termos") {
+	assertEquals(Term(2,4) / Term(1, 2), Term(2,2))
+}
+
+Test("divisao de dois polinomios") {
+	val dividendo = Pol(Term(2, 4), Term(4, 3), Term(3, 2), Term(1, 1), Term(1,0))
+	val divisor = Pol(Term(1, 2), Term(-1, 0))
+	val quociente = Pol(Term(2,2), Term(4,1), Term(5,0))
+	val resto = Pol(Term(5,1), Term(6,0))
+	assertEquals(dividendo / divisor, (quociente, resto))
+}
+
+Test("divisao de dois polinomios 2") {
+	val dividendo = Pol(Term(-6, 2), Term(4, 0))
+	val divisor = Pol(Term(1, 1), Term(1, 0))
+	val quociente = Pol(Term(-6,1), Term(6,0))
+	val resto = Pol(Term(-2,0))
+	assertEquals(dividendo / divisor, (quociente, resto))
 }
