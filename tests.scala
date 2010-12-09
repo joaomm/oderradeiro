@@ -199,3 +199,11 @@ Test("divisao de dois polinomios 2") {
 	val resto = Pol(Term(-2,0))
 	assertEquals(dividendo / divisor, (quociente, resto))
 }
+
+//Hashcode
+Test("deve ter um hashcode") {
+	val pol1 = Pol(Term(1, 2), Term(1,1))
+	val pol2 = Pol(1, 2) + Pol(1, 1)
+	assertEquals(pol2, pol1)
+	assertEquals(pol2.hashCode, pol1.hashCode)
+}

@@ -82,7 +82,13 @@ class Pol private (private val terms: List[Term]){
 		other match {
 			case that: Pol => terms == that.terms
 			case _ => false
-		} 	
+		}
+		
+	override def hashCode: Int = {
+		if(terms.isEmpty) 0
+			else terms.map(term => term.hashCode).reduceLeft(_ + _)
+		} 
+	
 }
 
 object Pol {
